@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of flutter_instagram.models;
+part of instagram.models;
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -53,4 +53,10 @@ RefreshAccessToken _$RefreshAccessTokenFromJson(Map<String, dynamic> json) {
     ..access_token = json['access_token'] as String
     ..token_type = json['token_type'] as String
     ..expires_in = json['expires_in'] as int;
+}
+
+InstagramError _$InstagramErrorFromJson(Map<String, dynamic> json) {
+  return InstagramError()
+    ..status = json['status'] as int
+    ..message = json['message'] as String;
 }

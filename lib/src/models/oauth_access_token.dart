@@ -1,4 +1,4 @@
-part of flutter_instagram.models;
+part of instagram.models;
 
 @JsonSerializable(createToJson: false)
 class OauthAccessToken extends Object {
@@ -8,4 +8,7 @@ class OauthAccessToken extends Object {
 
   String access_token;
   int user_id;
+
+  @override
+  String toString() => '$runtimeType { access_token: $access_token, user_id: $user_id}';
 }

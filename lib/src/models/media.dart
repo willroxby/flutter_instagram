@@ -1,4 +1,4 @@
-part of flutter_instagram.models;
+part of instagram.models;
 
 @JsonSerializable(createToJson: false)
 class Media extends Object {
@@ -15,4 +15,15 @@ class Media extends Object {
   String timestamp;
   String username;
   Children children;
+
+  String toString() =>'$runtimeType { '
+      'caption: $caption,'
+      'id: $id,'
+      'media_type: $media_type,'
+      'media_url: $media_url,'
+      'permalink: $permalink,'
+      'thumbnail_url: $thumbnail_url,'
+      'timestamp: $timestamp,'
+      'username: $username'
+      '}';
 }

@@ -1,4 +1,4 @@
-library flutter_instagram.models;
+library instagram.models;
 
 import 'package:json_annotation/json_annotation.dart';
 
@@ -10,3 +10,4 @@ part 'user.dart';
 part 'access_token.dart';
 part 'oauth_access_token.dart';
 part 'refresh_access_token.dart';
+part 'error.dart';

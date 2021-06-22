@@ -1,4 +1,4 @@
-part of flutter_instagram.models;
+part of instagram.models;
 
 @JsonSerializable(createToJson: false)
 class Children extends Object {
@@ -9,4 +9,5 @@ class Children extends Object {
   }
 
   List<Map> data;
+
 }
