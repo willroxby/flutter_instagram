@@ -70,7 +70,6 @@ abstract class InstagramApiBase {
   }
 
   static FutureOr<oauth2.Client> _getOauth2Client(InstagramApiCredentials credentials, http.BaseClient httpClient, [Function(InstagramApiCredentials) callBack]) async {
-    // if (credentials.fullyQualified) {
       var oauthCredentials = credentials._toOauth2Credentials();
 
       if (oauthCredentials.isExpired) {
@@ -130,7 +129,7 @@ abstract class InstagramApiBase {
   }
 
   Future<InstagramApiCredentials> getCredentials() async {
-    return await InstagramApiCredentials._fromClient(await _client);
+    return InstagramApiCredentials._fromClient(await _client);
   }
 
   String handleErrors(http.Response response) {

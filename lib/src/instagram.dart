@@ -19,4 +19,13 @@ class InstagramApi extends InstagramApiBase {
 
     return InstagramApi(instagramApiCredentials);
   }
+
+  Future<InstagramApi> refreshAccessToken() async {
+    final RefreshAccessToken token = await this.tokens.refreshAccessToken();
+    final InstagramApiCredentials credentials = await this.getCredentials();
+    InstagramApiCredentials instagramApiCredentials =
+    InstagramApiCredentials(credentials.clientId, credentials.clientSecret, accessToken: token.access_token, expiration: DateTime.now().add(Duration(seconds: token.expires_in)));
+
+    return InstagramApi(instagramApiCredentials);
+  }
 }
