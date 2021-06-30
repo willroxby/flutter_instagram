@@ -70,25 +70,20 @@ abstract class InstagramApiBase {
   }
 
   static FutureOr<oauth2.Client> _getOauth2Client(InstagramApiCredentials credentials, http.BaseClient httpClient, [Function(InstagramApiCredentials) callBack]) async {
-      var oauthCredentials = credentials._toOauth2Credentials();
+    var oauthCredentials = credentials._toOauth2Credentials();
 
-      if (oauthCredentials.isExpired) {
-        print('expired');
-        //Todo put refresh in here
-      }
-
-      return oauth2.Client(
-        oauthCredentials,
-        identifier: credentials.clientId,
-        onCredentialsRefreshed: callBack == null
-            ? null
-            : (oauth2.Credentials cred) {
-                InstagramApiCredentials newCredentials =
-                    InstagramApiCredentials(credentials.clientId, credentials.clientSecret, accessToken: cred.accessToken, expiration: cred.expiration, scopes: cred.scopes);
-                callBack(newCredentials);
-              },
-        secret: credentials.clientSecret,
-      );
+    return oauth2.Client(
+      oauthCredentials,
+      identifier: credentials.clientId,
+      onCredentialsRefreshed: callBack == null
+          ? null
+          : (oauth2.Credentials cred) {
+              InstagramApiCredentials newCredentials =
+                  InstagramApiCredentials(credentials.clientId, credentials.clientSecret, accessToken: cred.accessToken, expiration: cred.expiration, scopes: cred.scopes);
+              callBack(newCredentials);
+            },
+      secret: credentials.clientSecret,
+    );
   }
 
   Future<String> _get(String path, [bool urlOverride = false]) {

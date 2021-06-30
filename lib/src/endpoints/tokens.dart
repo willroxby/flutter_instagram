@@ -11,7 +11,6 @@ class Tokens extends EndpointBase {
 
   Future<AccessToken> getLongLivedToken() async {
     final InstagramApiCredentials credentials = await _api.getCredentials();
-    print('old ${credentials.accessToken}');
     var jsonString = await _api._get(
         '$_accessTokenUrl?' +
             _buildQuery({
