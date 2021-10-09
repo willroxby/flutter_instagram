@@ -8,6 +8,6 @@ class Children extends Object {
     return _$ChildrenFromJson(json);
   }
 
-  List<Map> data;
+  List<Map>? data;
 
 }

@@ -6,33 +6,30 @@ abstract class InstagramApiBase {
   static const String _authorizationUrl = 'https://api.instagram.com/oauth/authorize';
 
   bool _shouldWait = false;
-  FutureOr<oauth2.Client> _client;
+  late FutureOr<oauth2.Client> _client;
+  FutureOr<oauth2.Client> get client => _client;
 
-  oauth2.Client get client => _client;
-
-  Me _me;
-
+  late Me _me;
   Me get me => _me;
 
-  Tokens _tokens;
-
+  late Tokens _tokens;
   Tokens get tokens => _tokens;
 
   InstagramApiBase.fromClient(FutureOr<http.BaseClient> client) {
-    _client = client;
+    _client = client as FutureOr<oauth2.Client>;
     _me = Me(this);
     _tokens = Tokens(this);
   }
 
-  InstagramApiBase(InstagramApiCredentials credentials, [http.BaseClient httpClient, Function(InstagramApiCredentials) callBack])
+  InstagramApiBase(InstagramApiCredentials credentials, [http.Client? httpClient, Function(InstagramApiCredentials)? callBack])
       : this.fromClient(_getOauth2Client(credentials, httpClient, callBack));
 
   InstagramApiBase.fromAuthCodeGrant(oauth2.AuthorizationCodeGrant grant, String responseUri) : this.fromClient(grant.handleAuthorizationResponse(Uri.parse(responseUri).queryParameters));
 
-  static oauth2.AuthorizationCodeGrant authorizationCodeGrant(InstagramApiCredentials credentials, http.BaseClient httpClient, [Function(InstagramApiCredentials) callBack]) {
-    if (callBack == null)
+  static oauth2.AuthorizationCodeGrant authorizationCodeGrant(InstagramApiCredentials credentials, http.Client httpClient, [Function(InstagramApiCredentials)? callBack]) {
+    if (callBack == null) {
       return oauth2.AuthorizationCodeGrant(
-        credentials.clientId,
+        credentials.clientId!,
         Uri.parse(InstagramApiBase._authorizationUrl),
         Uri.parse(InstagramApiBase._tokenUrl),
         secret: credentials.clientSecret,
@@ -44,8 +41,9 @@ abstract class InstagramApiBase {
           return parameters;
         },
       );
+    }
 
-    return oauth2.AuthorizationCodeGrant(credentials.clientId, Uri.parse(InstagramApiBase._authorizationUrl), Uri.parse(InstagramApiBase._tokenUrl),
+    return oauth2.AuthorizationCodeGrant(credentials.clientId!, Uri.parse(InstagramApiBase._authorizationUrl), Uri.parse(InstagramApiBase._tokenUrl),
         basicAuth: false, secret: credentials.clientSecret, httpClient: httpClient, onCredentialsRefreshed: (oauth2.Credentials cred) {
       InstagramApiCredentials newCredentials = InstagramApiCredentials(credentials.clientId, credentials.clientSecret, accessToken: cred.accessToken, expiration: cred.expiration, scopes: cred.scopes);
       callBack(newCredentials);
@@ -69,7 +67,7 @@ abstract class InstagramApiBase {
     throw FormatException('Parameters must be a map, was "$untypedParameters"');
   }
 
-  static FutureOr<oauth2.Client> _getOauth2Client(InstagramApiCredentials credentials, http.BaseClient httpClient, [Function(InstagramApiCredentials) callBack]) async {
+  static FutureOr<oauth2.Client> _getOauth2Client(InstagramApiCredentials credentials, http.Client? httpClient, [Function(InstagramApiCredentials)? callBack]) async {
     var oauthCredentials = credentials._toOauth2Credentials();
 
     return oauth2.Client(
@@ -117,7 +115,7 @@ abstract class InstagramApiBase {
         if (i == retryLimit - 1) rethrow;
         print('Instagram API rate exceeded. waiting for ${ex.retryAfter} seconds');
         _shouldWait = true;
-        unawaited(Future.delayed(Duration(seconds: ex.retryAfter)).then((v) => _shouldWait = false));
+        unawaited(Future.delayed(Duration(seconds: ex.retryAfter.toInt())).then((v) => _shouldWait = false));
       }
     }
     throw InstagramException('Could not complete request');
@@ -133,7 +131,7 @@ abstract class InstagramApiBase {
       final jsonMap = json.decode(responseBody);
       final error = InstagramError.fromJson(jsonMap['error']);
       if (response.statusCode == 429) {
-        throw ApiRateException.fromInstagram(error, num.parse(response.headers['retry-after']));
+        throw ApiRateException.fromInstagram(error, num.parse(response.headers['retry-after']!));
       }
       throw InstagramException.fromInstagram(
         error,
